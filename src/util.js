@@ -1,13 +1,20 @@
 
 
+setLocalStorage();
+
+
+function generateId() {
+
+
+    let id = Math.floor(Math.random() * 999999999999).toString(16);
+    return id;
+}
+
 export function createTableElement(formInput) {
 
-  
-    setItem(data)
-    let id = Math.floor(Math.random() * 999999999999).toString(16);
-   
+
     let trEl = document.createElement('tr');
-    let date = formInput['date'];
+    let id = generateId();
 
     for (let key in formInput) {
 
@@ -30,18 +37,13 @@ export function createTableElement(formInput) {
                 td.textContent = formInput[key];
             }
         trEl.append(td);
+
     }
 
     trEl.append(createButtons());
-    /*<tr>
-                        <td>4.Jun</td>
-                        <td>Electricity</td>
-                        <td>Utilities</td>
-                        <td><span class="currency">100</span></td>
-                        <td><button>Edit</button><button>Delete</button></td>
-                    </tr>
-                    */
-                    data.set(id, formInput);           
+    trEl.className = id;
+
+
     return trEl
 }
 
@@ -70,7 +72,7 @@ function formatDate(date) {
 
 }
 
-function createButtons(){
+function createButtons() {
 
     let td = document.createElement('td');
     let editBtn = document.createElement('button');
@@ -83,15 +85,24 @@ function createButtons(){
 }
 
 
-export function setItem(){
+export function setLocalStorage() {
 
-    let data = new Map();
-    localStorage.setItem('expenses');
+    let map = new Map(JSON.parse(localStorage.getItem('expenses')));
+    localStorage.setItem('expenses', JSON.stringify(Array.from(map.entries())))
+
 }
 
-export function removeItem(item){
+export function removeItem(item) {
 
     localStorage.removeItem(`${item}`);
 }
 
 
+export function start() {
+
+    let data = new Map(JSON.parse(localStorage.getItem('expenses')));
+    console.log(data)
+    data.forEach(d => document.querySelector('tbody').append(createTableElement(d)))
+
+
+}

@@ -1,5 +1,6 @@
-import { createTableElement, setItem } from "./util.js";
+import { createTableElement, start } from "./util.js";
 
+start()
 
 let form = document.querySelector("#new-expense");
 
@@ -19,11 +20,15 @@ function onClick(e) {
     let index = formData['category'];
     let selected = document.querySelector(`[name=category]`).children[index].textContent;
     formData['category'] = selected;
-    console.log(formData);
- 
-    //console.log(data);
-   document.querySelector('tbody').append(createTableElement(formData))
-   console.log(createTableElement(formData))
+
+    let row = createTableElement(formData);
+    document.querySelector('tbody').append(row);
+    let map = new Map(JSON.parse(localStorage.getItem('expenses')));
+   
+
+    map.set(row.getAttribute('class'), formData);
+    localStorage.setItem('expenses', JSON.stringify(Array.from(map.entries())))
+
 
     form.reset();
 }
@@ -38,4 +43,4 @@ function onCancelation(e) {
 
 }
 
-//onsole.log(formData)
+

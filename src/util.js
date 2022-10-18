@@ -3,7 +3,7 @@
 setLocalStorage();
 
 
-function generateId() {
+export function generateId() {
 
 
     let id = Math.floor(Math.random() * 999999999999).toString(16);
@@ -14,7 +14,7 @@ export function createTableElement(formInput) {
 
 
     let trEl = document.createElement('tr');
-    let id = generateId();
+
 
     for (let key in formInput) {
 
@@ -23,7 +23,8 @@ export function createTableElement(formInput) {
 
         if (key == 'date') {
 
-            td.textContent = formatDate(formInput[key])
+            td.textContent = formatDate(formInput[key]);
+           // console.log(formInput[key])
         } else
             if (key == 'amount') {
 
@@ -41,7 +42,7 @@ export function createTableElement(formInput) {
     }
 
     trEl.append(createButtons());
-    trEl.className = id;
+
 
 
     return trEl
@@ -66,8 +67,10 @@ function formatDate(date) {
     }
 
     let current = new Date(date);
+   
     let month = current.getMonth();
-    let day = current.getDay();
+    let day = current.getDate();
+    //console.log(day)
     return `${day}.${months[month]}`
 
 }
@@ -88,7 +91,7 @@ function createButtons() {
 export function setLocalStorage() {
 
     let map = new Map(JSON.parse(localStorage.getItem('expenses')));
-    localStorage.setItem('expenses', JSON.stringify(Array.from(map.entries())))
+    localStorage.setItem('expenses', JSON.stringify(Array.from(map.entries())));
 
 }
 
@@ -100,9 +103,18 @@ export function removeItem(item) {
 
 export function start() {
 
+    let table = document.querySelector('tbody')
     let data = new Map(JSON.parse(localStorage.getItem('expenses')));
-    console.log(data)
-    data.forEach(d => document.querySelector('tbody').append(createTableElement(d)))
+    table.replaceChildren();
+
+    for (let el of data) {
+        
+        let current = createTableElement(el[1]);
+        current.setAttribute('id', el[0])
+      
+        table.append(current)
+
+    }
 
 
 }

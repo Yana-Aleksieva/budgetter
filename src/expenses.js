@@ -1,6 +1,6 @@
 import { createTableElement, generateId, start } from "./util.js";
 
-start()
+start('expenses')
 
 let form = document.querySelector("#new-expense");
 
@@ -61,11 +61,8 @@ function modifyTableRow(e) {
 
                 }
 
-
                 row.remove();
                 map.delete(el[0]);
-                //console.log(map);
-                //console.log(el[0])
                 localStorage.setItem('expenses', JSON.stringify(Array.from(map.entries())));
             }
 

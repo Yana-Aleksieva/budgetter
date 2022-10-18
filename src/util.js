@@ -24,7 +24,7 @@ export function createTableElement(formInput) {
         if (key == 'date') {
 
             td.textContent = formatDate(formInput[key]);
-           // console.log(formInput[key])
+            // console.log(formInput[key])
         } else
             if (key == 'amount') {
 
@@ -67,7 +67,7 @@ function formatDate(date) {
     }
 
     let current = new Date(date);
-   
+
     let month = current.getMonth();
     let day = current.getDate();
     //console.log(day)
@@ -101,20 +101,21 @@ export function removeItem(item) {
 }
 
 
-export function start() {
+export function start(name) {
 
     let table = document.querySelector('tbody')
-    let data = new Map(JSON.parse(localStorage.getItem('expenses')));
+    let data = new Map(JSON.parse(localStorage.getItem(`${name}`)));
     table.replaceChildren();
 
     for (let el of data) {
-        
+
         let current = createTableElement(el[1]);
         current.setAttribute('id', el[0])
-      
+
         table.append(current)
 
     }
 
 
 }
+

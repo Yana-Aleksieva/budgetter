@@ -161,38 +161,65 @@ export function summaryTable() {
 
     for (let tuple of entries) {
 
+        let date = new Date(tuple[1].date);
+        let year = date.getFullYear();
+
+        if (!summary.hasOwnProperty(year)) {
+            summary[year] = {};
+        }
         let returnedDate = formatDate(tuple[1].date).split('.');
         let month = returnedDate[1];
         let category = tuple[1].category;
 
-        if (!summary.hasOwnProperty(category)) {
+        if (!summary[year].hasOwnProperty(category)) {
 
-            summary[category] = {};
+            summary[year][category] = {};
 
         }
-        if (!summary[category].hasOwnProperty(month)) {
-            summary[category][month] = 0;
+        if (!summary[year][category].hasOwnProperty(month)) {
+            summary[year][category][month] = 0;
         }
 
-        summary[category][month] += (Number(tuple[1].amount));
+        summary[year][category][month] += (Number(tuple[1].amount));
+
     }
-
 
     localStorage.setItem('summary', JSON.stringify(summary))
 
 }
 
 
+function sumTotalMonth() {
+
+    let tableEl = Array.from(document.querySelectorAll('tbody tr  span'));
+    let thArray = document.querySelectorAll('tbody tr th');
+    let totalElements = Array.from(document.querySelectorAll('.total  span'));
+
+    //console.log(totalElements)
+    for (let totalRow = 0; totalRow < totalElements.length; totalRow++) {
+        let totalMonthSum = 0;
+        for (let row = totalRow; row < tableEl.length; row += 3) {
+
+            if (row >= tableEl.length) {
+                break;
+            }
+            totalMonthSum += Number(tableEl[row].textContent);
+            //console.log(tableEl[row].textContent)
+
+        }
+        totalElements[totalRow].textContent = totalMonthSum;
+        //console.log(totalElements[totalRow])
+    }
+}
+
 export function fillRow() {
+
     let thArray = document.querySelectorAll('tbody tr th');
     let rowElements = Array.from(document.querySelectorAll('tbody tr  span'));
     let startIndex = 0;
     let thead = Array.from(document.querySelector('thead tr').children).slice(1, 4);
     let summary = (JSON.parse(localStorage.getItem('summary')));
-   
-    summaryTable();
-
-
+    console.log(summary)
 
     for (let row = 0; row < 10; row += 2) {
         let util = thArray[row].textContent;
@@ -201,27 +228,31 @@ export function fillRow() {
         currentCells.forEach(c => c.textContent = "");
         let total = 0;
         let i = 0;
-       
-    
+
+
         currentCells.forEach(e => {
-           
-           
+
+
             if (i == 3) {
                 e.textContent = total;
             } else {
 
 
-                let currentMonth = thead[i].textContent;
-                //console.log(currentMonth)
+                let [currentMonth, currentYear] = (thead[i].textContent).split(' ');
+                console.log(currentYear)
 
-                if (summary.hasOwnProperty(util)) {
+                if (summary.hasOwnProperty(currentYear)) {
+                    console.log(summary[currentYear])
+                    if (summary[currentYear].hasOwnProperty(util)) {
 
-                    if (summary[util].hasOwnProperty(currentMonth)) {
-                      
-                       // console.log(summary[util][currentMonth])
-                        let sum = summary[util][currentMonth];
-                        e.textContent = sum;
-                        total += Number(sum)
+                        if (summary[currentYear][util].hasOwnProperty(currentMonth)) {
+
+                            let sum = summary[currentYear][util][currentMonth];
+                            e.textContent = sum;
+                            total += Number(sum)
+                        } else {
+                            e.textContent = 0;
+                        }
                     } else {
                         e.textContent = 0;
                     }
@@ -233,8 +264,11 @@ export function fillRow() {
         });
         startIndex += 4;
 
-      
+
 
 
     }
+
+    sumTotalMonth()
 }
+

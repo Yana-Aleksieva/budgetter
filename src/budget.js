@@ -11,30 +11,31 @@ btns.forEach(b => b.addEventListener('click', onClick))
 
 
 
-function onClick(e){
+function onClick(e) {
 
-e.preventDefault();
+    e.preventDefault();
 
-const formData = Object.fromEntries(new FormData(form));
-console.log(formData)
-if(e.target.textContent === "Save"){
+    const formData = Object.fromEntries(new FormData(form));
+    //console.log(formData)
+    if (e.target.textContent === "Save") {
 
-   let row = createTableElement(formData);
-    let id = generateId();
-    row.setAttribute('id', id)
-    document.querySelector('tbody').append(row);
-    let map = new Map(JSON.parse(localStorage.getItem('budget')));
-    map.set(row.getAttribute('id'), formData);
-    localStorage.setItem('budget', JSON.stringify(Array.from(map.entries())))
-    form.reset();
-    console.log('Save')
-}else if(e.target.textContent === "Cancel"){
+        let row = createTableElement(formData, 'budget');
+        console.log(formData)
+        let id = generateId();
+        row.setAttribute('id', id)
+        document.querySelector('tbody').append(row);
+        let map = new Map(JSON.parse(localStorage.getItem('budget')));
+        map.set(row.getAttribute('id'), formData);
+        localStorage.setItem('budget', JSON.stringify(Array.from(map.entries())))
+        form.reset();
+        //console.log('Save')
+    } else if (e.target.textContent === "Cancel") {
 
-    console.log('cancel')
+        //console.log('cancel')
+    }
 }
-}
 
-function editTableRow(e){
+function editTableRow(e) {
     let row = e.target.parentElement.parentElement;
     let id = row.getAttribute('id');
     let map = new Map(JSON.parse(localStorage.getItem('budget')));

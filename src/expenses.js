@@ -25,7 +25,7 @@ function onClick(e) {
     let map = new Map(JSON.parse(localStorage.getItem('expenses')));
 
     let id = generateId();
-    let row = createTableElement(formData);
+    let row = createTableElement(formData, 'expenses');
     row.setAttribute('id', id)
     document.querySelector('tbody').append(row);
 

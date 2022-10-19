@@ -157,31 +157,84 @@ export function summaryTable() {
 
     let summary = {};
     let expenses = new Map(JSON.parse(localStorage.getItem(`expenses`)));
-    //console.log(expenses)
     let entries = expenses.entries();
-    //console.log(entries)
+
     for (let tuple of entries) {
 
-        //console.log(tuple[1].date);
         let returnedDate = formatDate(tuple[1].date).split('.');
         let month = returnedDate[1];
         let category = tuple[1].category;
-       // console.log(month);
-        if(!summary.hasOwnProperty(category)){
+
+        if (!summary.hasOwnProperty(category)) {
 
             summary[category] = {};
-            
-         
-            
+
         }
-        if(!summary[category].hasOwnProperty(month)){
+        if (!summary[category].hasOwnProperty(month)) {
             summary[category][month] = 0;
         }
-        
+
         summary[category][month] += (Number(tuple[1].amount));
     }
-    //console.log(summary);
+
 
     localStorage.setItem('summary', JSON.stringify(summary))
 
+}
+
+
+export function fillRow() {
+    let thArray = document.querySelectorAll('tbody tr th');
+    let rowElements = Array.from(document.querySelectorAll('tbody tr  span'));
+    let startIndex = 0;
+    let thead = Array.from(document.querySelector('thead tr').children).slice(1, 4);
+    let summary = (JSON.parse(localStorage.getItem('summary')));
+   
+    summaryTable();
+
+
+
+    for (let row = 0; row < 10; row += 2) {
+        let util = thArray[row].textContent;
+
+        let currentCells = rowElements.slice(startIndex, startIndex + 4);
+        currentCells.forEach(c => c.textContent = "");
+        let total = 0;
+        let i = 0;
+       
+    
+        currentCells.forEach(e => {
+           
+           
+            if (i == 3) {
+                e.textContent = total;
+            } else {
+
+
+                let currentMonth = thead[i].textContent;
+                //console.log(currentMonth)
+
+                if (summary.hasOwnProperty(util)) {
+
+                    if (summary[util].hasOwnProperty(currentMonth)) {
+                      
+                       // console.log(summary[util][currentMonth])
+                        let sum = summary[util][currentMonth];
+                        e.textContent = sum;
+                        total += Number(sum)
+                    } else {
+                        e.textContent = 0;
+                    }
+                } else {
+                    e.textContent = 0;
+                }
+            }
+            i++;
+        });
+        startIndex += 4;
+
+      
+
+
+    }
 }

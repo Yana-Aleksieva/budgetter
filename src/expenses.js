@@ -1,4 +1,4 @@
-import { createTableElement, generateId, start } from "./util.js";
+import { createTableElement, generateId, start, summaryTable } from "./util.js";
 
 start('expenses')
 
@@ -31,7 +31,7 @@ function onClick(e) {
 
     map.set(row.getAttribute('id'), formData);
     localStorage.setItem('expenses', JSON.stringify(Array.from(map.entries())))
-
+    summaryTable();
 
     form.reset();
 }

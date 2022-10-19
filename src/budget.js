@@ -28,10 +28,10 @@ function onClick(e) {
         map.set(row.getAttribute('id'), formData);
         localStorage.setItem('budget', JSON.stringify(Array.from(map.entries())))
         form.reset();
-        //console.log('Save')
+      
     } else if (e.target.textContent === "Cancel") {
 
-        //console.log('cancel')
+        
     }
 }
 

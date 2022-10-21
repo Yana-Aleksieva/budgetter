@@ -1,7 +1,20 @@
 
 
 setLocalStorage();
-
+let months = {
+  0: 'Jan',
+  1: 'Feb',
+  2: 'Mar',
+  3: 'Apr',
+  4: 'May',
+  5: 'Jun',
+  6: 'Jul',
+  7: 'Aug',
+  8: 'Sep',
+  9: 'Oct',
+  10: 'Nov',
+  11: 'Dec'
+}
 
 export function generateId() {
 
@@ -46,31 +59,97 @@ export function createTableElement(formInput, name) {
     trEl.append(td);
 
   }
+  if (name == 'budget' || name == 'expenses') {
+    trEl.append(createButtons());
+  }
 
-  trEl.append(createButtons());
 
 
 
   return trEl
 }
 
+export function createSummaryRow(el) {
+
+
+
+ 
+  el.innerHTML += 
+   
+  `<thead>
+  <tr>
+      <th>Category</th>
+      <th>Jan</th>
+      <th>Feb</th>
+      <th>Mar</th>
+      <th>Total</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+      <th>Utilities</th>
+      <td><span class="currency"></span></td>
+      <td><span class="currency"></span></td>
+      <td><span class="currency"></span></td>
+      <th><span class="currency"></span></th>
+  </tr>
+  <tr>
+      <th>Groceries</th>
+      <td><span class="currency"></span></td>
+      <td><span class="currency"></span></td>
+      <td><span class="currency"></span></td>
+      <th><span class="currency"></span></th>
+  </tr>
+  <tr>
+      <th>Entertainment</th>
+      <td><span class="currency"></span></td>
+      <td><span class="currency"></span></td>
+      <td><span class="currency"></span></td>
+      <th><span class="currency"></span></th>
+  </tr>
+  <tr>
+      <th>Transport</th>
+      <td><span class="currency"></span></td>
+      <td><span class="currency"></span></td>
+      <td><span class="currency"></span></td>
+      <th><span class="currency"></span></th>
+  </tr>
+  <tr>
+      <th>Other</th>
+      <td><span class="currency"></span></td>
+      <td><span class="currency"></span></td>
+      <td><span class="currency"></span></td>
+      <th><span class="currency"></span></th>
+  </tr>
+</tbody>
+<tfoot>
+  <tr class="total">
+      <th>Total Spent</th>
+      <td><span class="currency"></span></td>
+      <td><span class="currency"></span></td>
+      <td><span class="currency"></span></td>
+      <th><span class="currency"></span></th>
+  </tr>
+  <tr class="overrun">
+      <th>Budget Overruns</th>
+      <td><span class="currency"></span></td>
+      <td><span class="currency"></span></td>
+      <td><span class="currency"></span></td>
+      <th><span class="currency"></span></th>
+  </tr>
+  <tr class="savings">
+      <th>Savings</th>
+      <td><span class="currency"></span></td>
+      <td><span class="currency"></span></td>
+      <td><span class="currency"></span></td>
+      <th><span class="currency"></span></th>
+  </tr>
+</tfoot>`
+return el;
+  
+}
 
 function formatDate(date) {
-
-  let months = {
-    0: 'Jan',
-    1: 'Feb',
-    2: 'Mar',
-    3: 'Apr',
-    4: 'May',
-    5: 'Jun',
-    6: 'Jul',
-    7: 'Aug',
-    8: 'Sep',
-    9: 'Oct',
-    10: 'Nov',
-    11: 'Dec'
-  }
 
   let current = new Date(date);
 
@@ -82,20 +161,7 @@ function formatDate(date) {
 
 export function getMonth(date) {
 
-  let months = {
-    0: 'Jan',
-    1: 'Feb',
-    2: 'Mar',
-    3: 'Apr',
-    4: 'May',
-    5: 'Jun',
-    6: 'Jul',
-    7: 'Aug',
-    8: 'Sep',
-    9: 'Oct',
-    10: 'Nov',
-    11: 'Dec'
-  }
+
   let date1 = date.toString().split('-')
 
   let [month, year] = [...date1];
@@ -181,7 +247,9 @@ export function summaryTable() {
     }
 
     summary[year][category][month] += (Number(tuple[1].amount));
-
+    summary[year]['spendedMoney'] = 0;
+    summary[year]['savedMoney'] = 0;
+    summary[year]['overruns'] = 0;
   }
 
   localStorage.setItem('summary', JSON.stringify(summary))
@@ -297,11 +365,10 @@ function sumBudget(year) {
   let spendEl = Array.from(document.querySelectorAll('.total td span'));
   let budget = Object.fromEntries(new Map(JSON.parse(localStorage.getItem(`budget`))));
   let savings = Array.from(document.querySelectorAll('.savings td span'));
-  let totalsavings = Array.from(document.querySelector('.savings th span'));
+  let totalsavings = document.querySelector('.savings th span');
   let totalSpend = Array.from(document.querySelectorAll('.overrun th span'));
-  console.log(totalsavings)
-console.log(totalSpend)
-  console.log()
+  let summary = (JSON.parse(localStorage.getItem('summary')));
+
 
 
   for (let key in budget) {
@@ -321,7 +388,8 @@ console.log(totalSpend)
           console.log(thead[i].textContent, month);
           let currentSpend = Number(spendEl[i].textContent);
           let currentBudget = Number(currentEl.budget);
-          let diff = currentBudget - currentSpend;
+          let currentIncome = Number(currentEl.income);
+          let diff = (currentIncome - currentBudget) - currentSpend;
 
           if (diff < 0) {
             budgetFields[i].textContent = Math.abs(diff);
@@ -338,20 +406,27 @@ console.log(totalSpend)
           savings[i].textContent = 0;
 
         }
-      
+
       }
+
     }
 
   }
-  totalSpend.textContent = 
-  budgetFields.map(e => e.textContent)
-  .reduce((a, x) => Number(a) + Number(x), 0);
-  
-totalsavings.textContent = savings.map(e => e.textContent)
-  .reduce((a, x) => Number(a) + Number(x), 0);
- // console.log(saved)
 
 
+  if (year) {
+    let spendMoney = budgetFields.map(e => e.textContent)
+      .reduce((a, x) => Number(a) + Number(x), 0);
+    totalSpend[0].textContent = Number(spendMoney);
+    summary[year].overruns += spendMoney;
+    summary[year].spendedMoney += Number(document.querySelector('.total th span').textContent);
+    let totalSavedMoney = savings.map(e => e.textContent)
+      .reduce((a, x) => Number(a) + Number(x), 0);
+    totalsavings.textContent = totalSavedMoney;
+    summary[year].savedMoney += totalSavedMoney;
 
+    //console.log(summary)
+    localStorage.setItem('summary', JSON.stringify(summary));
+  }
 }
 

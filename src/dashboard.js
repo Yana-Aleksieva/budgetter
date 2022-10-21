@@ -32,13 +32,28 @@ if ( summary != null && Object.entries(summary).length > 0 ) {
     }
     console.log(breakdown);
     let article = document.querySelector('article:not([class=clear])');
-    console.log(article)
+  
      createLeftColEl(document.querySelector('.left-col'), obj);
-     createLeftColEl(article, breakdown, 100)
+     let breakdownSum = Object.values(breakdown).reduce((acc, x) => acc + x, 0);
+     let objSum =  Object.values(obj).reduce((acc, x) => acc + x, 0);
+     createLeftColEl(article, breakdown, breakdownSum);
+  
        let rigthEl = document.querySelector('.right-col');
-    createRigthCol(rigthEl, 'ov spent', 100);
-    createRigthCol(rigthEl, 'ov remain', 100);
-    createRigthCol(rigthEl, 'ov save', 100);
+
+       for(let key in obj){
+
+        if(key == 'Spent'){
+            createRigthCol(rigthEl, 'ov spent', (Number(obj[key]) /objSum * 300));
+        }else if(key == 'Remaining'){
+            createRigthCol(rigthEl, 'ov remain', (obj[key] /objSum * 300));
+        }else{
+            createRigthCol(rigthEl, 'ov save', (obj[key] /objSum * 300));
+        }
+      }
+    // 
+    // 
+    //
+    console.log( (obj.Utilities))
 }
 
 function createLeftColEl(parent, obj, elWidth) {
@@ -64,16 +79,14 @@ function createLeftColEl(parent, obj, elWidth) {
             bar.setAttribute('class', 'bar-area');
             let span = document.createElement('span');
             span.setAttribute('class', 'bar')
-            span.style.width = `${elWidth}px`;
+            span.style.width = `${obj[key]/elWidth * 500}px`;
             bar.append(span);
             div.append(bar);
         }
         parent.append(div);
     }
 
-//     <div class="bar-area">
-//     <span class="bar" style="width: 300px"></span>
-// </div>
+
 }
 
 

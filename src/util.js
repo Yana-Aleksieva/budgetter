@@ -424,8 +424,6 @@ function sumBudget(year) {
       .reduce((a, x) => Number(a) + Number(x), 0);
     totalsavings.textContent = totalSavedMoney;
     summary[year].savedMoney += totalSavedMoney;
-
-    //console.log(summary)
     localStorage.setItem('summary', JSON.stringify(summary));
   }
 }
